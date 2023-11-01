@@ -30,5 +30,5 @@ namespace RPG_Test
             MonsterLivingHere = monsterLivingHere;
         }
     }
-    }
+    
 }
