@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RPG_Test
 {
-    internal class Item
+    public class Item
     {
         public int ID { get; set; }
         public string Name { get; set; }

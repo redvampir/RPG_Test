@@ -7,7 +7,7 @@ namespace RPG_Test
         public Form1()
         {
             InitializeComponent();
-            _player = new Player(10,10, 20, 0, 1);
+            _player = new Player(10, 10, 20, 0, 1);
 
 
             lblHitPoints.Text = _player.CurrentHitPoints.ToString();
@@ -18,8 +18,38 @@ namespace RPG_Test
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            
+
         }
 
+        //Use Weapon
+        private void button1_Click(object sender, EventArgs e) 
+        {
+
+        }
+
+        private void btnNorth_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnEast_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnSouth_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnWest_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnUsePotion_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RPG_Test
 {
-    internal class QuestCompletionItem
+    public class QuestCompletionItem
     {
         public Item Details { get; set; }
         public int Quantity { get; set; }

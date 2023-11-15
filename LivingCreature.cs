@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RPG_Test
 {
-    internal class LivingCreature
+    public class LivingCreature
     {
         public int CurrentHitPoints { get; set; }
         public int MaximumHitPoints { get; set; }
