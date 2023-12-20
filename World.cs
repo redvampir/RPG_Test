@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,12 +25,14 @@ namespace RPG_Test
         public const int ITEM_ID_ADVENTURER_PASS = 10;
         public const int ITEM_ID_WOLFSKIN = 11;
         public const int ITEM_ID_WOLF_FANG = 12;
+        public const int ITEM_ID_OLD_SWORD = 13;
         public const int MONSTER_ID_RAT = 1;
         public const int MONSTER_ID_SNAKE = 2;
         public const int MONSTER_ID_GIANT_SPIDER = 3;
         public const int MONSTER_ID_WOLF = 4;
         public const int QUEST_ID_CLEAR_ALCHEMIST_GARDEN = 1;
         public const int QUEST_ID_CLEAR_FARMERS_FIELD = 2;
+        public const int QUEST_ID_HUNTER_S_ERRAND = 3;
         public const int LOCATION_ID_HOME = 1;
         public const int LOCATION_ID_TOWN_SQUARE = 2;
         public const int LOCATION_ID_GUARD_POST = 3;
@@ -40,6 +43,7 @@ namespace RPG_Test
         public const int LOCATION_ID_BRIDGE = 8;
         public const int LOCATION_ID_SPIDER_FIELD = 9;
         public const int LOCATION_ID_THE_DARK_FOREST = 10;
+        public const int LOCATION_ID_HUNTER_S_HUT = 11;
 
         static World()
         {
@@ -63,6 +67,7 @@ namespace RPG_Test
             Items.Add(new Item(ITEM_ID_ADVENTURER_PASS, "Adventurer pass", "Adventurer passes"));
             Items.Add(new Item(ITEM_ID_WOLFSKIN, "Wolfskin", "Wolfskins"));
             Items.Add(new Item(ITEM_ID_WOLF_FANG, "Wolf fang", "Wolf fangs"));
+            Items.Add(new Weapon(ITEM_ID_OLD_SWORD, "Old sword", "Old swords", 5, 15));
         }
 
         public static Item ItemByID(int id)
@@ -119,8 +124,17 @@ namespace RPG_Test
             clearFarmersField.QuestCompletionItems.Add(new QuestCompletionItem(ItemByID(ITEM_ID_SNAKE_FANG), 3));
             clearFarmersField.RewardItem = ItemByID(ITEM_ID_ADVENTURER_PASS);
             Quests.Add(clearFarmersField);
-            
+
             //TODO сделать волчий квест 
+            Quest hunterSErrand =
+                new Quest(
+                    QUEST_ID_HUNTER_S_ERRAND,
+                    "Kill dangerous wolves",
+                    "Go into the dark forest and kill two wolves. Bring their skins as proof. For this you will receive an old sword and 20 gold pieces.", 30, 20);
+            hunterSErrand.QuestCompletionItems.Add(new QuestCompletionItem(ItemByID(ITEM_ID_WOLFSKIN), 2));
+            hunterSErrand.RewardItem = ItemByID(ITEM_ID_OLD_SWORD);
+            Quests.Add(hunterSErrand);
+
         }
         private static void PopulateLocations()
         {
@@ -142,6 +156,9 @@ namespace RPG_Test
             //Сделана мной локация
             Location theDarkForest = new Location(LOCATION_ID_THE_DARK_FOREST, "The Dark Forest", "You see a big black wolf with glowing red eyes.");
             theDarkForest.MonsterLivingHere = MonsterByID(MONSTER_ID_WOLF);
+            Location hunterSHut = new Location(LOCATION_ID_HUNTER_S_HUT, "Hunter's hut", "You see a small hut near which a hunter is sitting on a bench.");
+            hunterSHut.QuestAvailableHere = QuestByID(QUEST_ID_HUNTER_S_ERRAND);
+
             // Соедините локации вместе
             home.LocationToNorth = townSquare;
             townSquare.LocationToNorth = alchemistHut;
@@ -154,6 +171,7 @@ namespace RPG_Test
             alchemistHut.LocationToSouth = townSquare;
             alchemistHut.LocationToNorth = alchemistsGarden;
             alchemistHut.LocationToEast = theDarkForest;
+            alchemistHut.LocationToWest = hunterSHut;
             alchemistsGarden.LocationToSouth = alchemistHut;
             guardPost.LocationToEast = bridge;
             guardPost.LocationToWest = townSquare;
@@ -163,6 +181,7 @@ namespace RPG_Test
             // Соединял локации
             theDarkForest.LocationToWest = alchemistHut;
             theDarkForest.LocationToSouth = guardPost;
+            hunterSHut.LocationToEast = alchemistHut;
 
             //Добавьте местоположения в статический список
             Locations.Add(home);
@@ -175,6 +194,7 @@ namespace RPG_Test
             Locations.Add(bridge);
             Locations.Add(spiderField);
             Locations.Add(theDarkForest);
+            Locations.Add(hunterSHut);
         }
 
         public static Monster MonsterByID(int id)

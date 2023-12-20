@@ -1,4 +1,4 @@
-namespace RPG_Test
+﻿namespace RPG_Test
 {
     public partial class Form1 : Form
     {
@@ -24,32 +24,32 @@ namespace RPG_Test
 
         }
 
-        //Use Weapon
+        //Use Weapon - использовать оружие
         private void button1_Click(object sender, EventArgs e) 
         {
-            // �������� ��������� � ������ ������ ������ �� ������ ������ cbo
+            // Получаем выбранное в данный момент оружие из списка оружия cbo
             Weapon currentWeapon = (Weapon)cboWeapons.SelectedItem;
-            // Determine the amount of damage to do to the monster
+            // Определяем величину урона, который нужно нанести монстру
             int damageToMonster = RandomNumberGenerator.NumberBetween(currentWeapon.MinimumDamage, currentWeapon.MaximumDamage);
-            // Apply the damage to the monster's CurrentHitPoints
+            // Применяем урон к текущим очкам жизни монстра
             _currentMonster.CurrentHitPoints -= damageToMonster;
-            // Display message
+            // Отображение сообщения
             rtbMessages.Text += "You hit the " + _currentMonster.Name + " for " + damageToMonster.ToString() + " points." + Environment.NewLine;
-            // Check if the monster is dead
+            // Проверяем, мертв ли ​​монстр
             if (_currentMonster.CurrentHitPoints <= 0)
             {
-                // Monster is dead
+                // Монстр мертв
                 rtbMessages.Text += Environment.NewLine;
                 rtbMessages.Text += "You defeated the " + _currentMonster.Name + Environment.NewLine;
-                // Give player experience points for killing the monster
+                // Даем игроку очки опыта за убийство монстра
                 _player.ExperiencePoints += _currentMonster.RewardExperiencePoints;
                 rtbMessages.Text += "You receive " + _currentMonster.RewardExperiencePoints.ToString() + " experience points" + Environment.NewLine;
-                // Give player gold for killing the monster 
+                // Даем игроку золото за убийство монстра
                 _player.Gold += _currentMonster.RewardGold;
                 rtbMessages.Text += "You receive " + _currentMonster.RewardGold.ToString() + " gold" + Environment.NewLine;
-                // Get random loot items from the monster
+                // Получаем случайную добычу от монстра
                 List<InventoryItem> lootedItems = new List<InventoryItem>();
-                // Add items to the lootedItems list, comparing a random number to the drop percentage
+                // Добавляем предметы в список добытых предметов, сравнивая случайное число с процентом выпадения
                 foreach (LootItem lootItem in _currentMonster.LootTable)
                 {
                     if (RandomNumberGenerator.NumberBetween(1, 100) <= lootItem.DropPercentage)
@@ -57,7 +57,7 @@ namespace RPG_Test
                         lootedItems.Add(new InventoryItem(lootItem.Details, 1));
                     }
                 }
-                // If no items were randomly selected, then add the default loot item(s).
+                // Если ни один предмет не был выбран случайным образом, добавьте предмет(ы) добычи по умолчанию.
                 if (lootedItems.Count == 0)
                 {
                     foreach (LootItem lootItem in _currentMonster.LootTable)
@@ -68,7 +68,7 @@ namespace RPG_Test
                         }
                     }
                 }
-                // Add the looted items to the player's inventory
+                // Добавляем добытые предметы в инвентарь игрока
                 foreach (InventoryItem inventoryItem in lootedItems)
                 {
                     _player.AddItemToInventory(inventoryItem.Details);
@@ -81,7 +81,7 @@ namespace RPG_Test
                         rtbMessages.Text += "You loot " + inventoryItem.Quantity.ToString() + " " + inventoryItem.Details.NamePlural + Environment.NewLine;
                     }
                 }
-                // Refresh player information and inventory controls
+                // Обновляем информацию об игроке и элементы управления инвентарем
                 lblHitPoints.Text = _player.CurrentHitPoints.ToString();
                 lblGold.Text = _player.Gold.ToString();
                 lblExperience.Text = _player.ExperiencePoints.ToString();
@@ -89,27 +89,27 @@ namespace RPG_Test
                 UpdateInventoryListInUI();
                 UpdateWeaponListInUI();
                 UpdatePotionListInUI();
-                // Add a blank line to the messages box, just for appearance.
+                // Добавляем пустую строку в окно сообщений просто для внешнего вида.
                 rtbMessages.Text += Environment.NewLine;
-                // Move player to current location (to heal player and create a new monster to fight)
+                // Перемещаем игрока в текущую локацию (чтобы исцелить игрока и создать нового монстра для боя)
                 MoveTo(_player.CurrentLocation);
             }
             else
             {
-                // Monster is still alive
-                // Determine the amount of damage the monster does to the player
+                // Монстр все еще жив
+                // Определяем количество урона, которое монстр наносит игроку
                 int damageToPlayer = RandomNumberGenerator.NumberBetween(0, _currentMonster.MaximumDamage);
-                // Display message
+                // Отображение сообщения
                 rtbMessages.Text += "The " + _currentMonster.Name + " did " + damageToPlayer.ToString() + " points of damage." + Environment.NewLine;
-                // Subtract damage from player
+                // Вычитаем урон от игрока
                 _player.CurrentHitPoints -= damageToPlayer;
-                // Refresh player data in UI
+                // Обновляем данные игрока в пользовательском интерфейсе
                 lblHitPoints.Text = _player.CurrentHitPoints.ToString();
                 if (_player.CurrentHitPoints <= 0)
                 {
-                    // Display message
+                    // Отображение сообщения
                     rtbMessages.Text += "The " + _currentMonster.Name + " killed you." + Environment.NewLine;
-                    // Move player to "Home"
+                    // Перемещаем игрока в «Домой»
                     MoveTo(World.LocationByID(World.LOCATION_ID_HOME));
                 }
             }
@@ -137,16 +137,16 @@ namespace RPG_Test
 
         private void btnUsePotion_Click(object sender, EventArgs e)
         {
-            // Get the currently selected potion from the combobox
+            // Получаем выбранное в данный момент зелье из поля со списком
             HealingPotion potion = (HealingPotion)cboPotions.SelectedItem;
-            // Add healing amount to the player's current hit points
+            // Добавляем количество исцеления к текущим очкам здоровья игрока
             _player.CurrentHitPoints = (_player.CurrentHitPoints + potion.AmountToHeal);
-            // CurrentHitPoints cannot exceed player's MaximumHitPoints
+            // Текущие очки жизни не могут превышать максимальные очки жизни игрока
             if (_player.CurrentHitPoints > _player.MaximumHitPoints)
             {
                 _player.CurrentHitPoints = _player.MaximumHitPoints;
             }
-            // Remove the potion from the player's inventory
+            // Удалить зелье из инвентаря игрока
             foreach (InventoryItem ii in _player.Inventory)
             {
                 if (ii.Details.ID == potion.ID)
@@ -155,23 +155,23 @@ namespace RPG_Test
                     break;
                 }
             }
-            // Display message
+            // Отображение сообщения
             rtbMessages.Text += "You drink a " + potion.Name + Environment.NewLine;
-            // Monster gets their turn to attack
-            // Determine the amount of damage the monster does to the player
+            // Монстр получает очередь атаковать
+            // Определяем количество урона, которое монстр наносит игроку
             int damageToPlayer = RandomNumberGenerator.NumberBetween(0, _currentMonster.MaximumDamage);
-            // Display message
+            // Отображение сообщения
             rtbMessages.Text += "The " + _currentMonster.Name + " did " + damageToPlayer.ToString() + " points of damage." + Environment.NewLine;
-            // Subtract damage from player
+            // Вычитаем урон от игрока
             _player.CurrentHitPoints -= damageToPlayer;
             if (_player.CurrentHitPoints <= 0)
             {
-                // Display message
+                // Отображение сообщения
                 rtbMessages.Text += "The " + _currentMonster.Name + " killed you." + Environment.NewLine;
-                // Move player to "Home"
+                // Перемещаем игрока в «Домой»
                 MoveTo(World.LocationByID(World.LOCATION_ID_HOME));
             }
-            // Refresh player data in UI
+            // Обновляем данные игрока в пользовательском интерфейсе
             lblHitPoints.Text = _player.CurrentHitPoints.ToString();
             UpdateInventoryListInUI();
             UpdatePotionListInUI();
@@ -182,58 +182,58 @@ namespace RPG_Test
           
             if (!_player.HasRequiredItemToEnterThisLocation(newLocation))
             {
-                 // We didn't find the required item in their inventory, so display a message and stop trying to move
+                 // Мы не нашли нужный предмет в их инвентаре, поэтому выводим сообщение и прекращаем попытки переместить
                  rtbMessages.Text += "You must have a " + newLocation.ItemRequiredToEnter.Name + " to enter this location." + Environment.NewLine;
                  return;
             }
             
 
-            // Update the player's current location
+            // Обновляем текущее местоположение игрока
             _player.CurrentLocation = newLocation;
 
-            // Show/hide available movement buttons
+            // Показать/скрыть доступные кнопки перемещения
             btnNorth.Visible = (newLocation.LocationToNorth != null);
             btnEast.Visible = (newLocation.LocationToEast != null);
             btnSouth.Visible = (newLocation.LocationToSouth != null);
             btnWest.Visible = (newLocation.LocationToWest != null);
 
-            // Display current location name and description
+            // Отображение названия и описания текущего местоположения
             rtbLocation.Text = newLocation.Name + Environment.NewLine;
             rtbLocation.Text += newLocation.Description + Environment.NewLine;
 
-            // Completely heal the player
+            // Полностью исцеляем игрока
             _player.CurrentHitPoints = _player.MaximumHitPoints;
 
-            // Update Hit Points in UI
+            // Обновление очков жизни в пользовательском интерфейсе
             lblHitPoints.Text = _player.CurrentHitPoints.ToString();
 
-            // Does the location have a quest?
+            // Есть ли в локации квест?
             if (newLocation.QuestAvailableHere != null)
             {
-                // See if the player already has the quest, and if they've completed it
+                // Проверяем, есть ли у игрока уже квест и выполнил ли он его
                 bool playerAlreadyHasQuest = _player.HasThisQuest(newLocation.QuestAvailableHere);
                 bool playerAlreadyCompletedQuest = _player.CompletedThisQuest(newLocation.QuestAvailableHere);
 
-                // See if the player already has the quest
+                // Проверяем, есть ли у игрока уже квест
                 if (playerAlreadyHasQuest)
                 {
-                    // If the player has not completed the quest yet
+                    // Если игрок еще не завершил квест
                     if (!playerAlreadyCompletedQuest)
                     {
-                        // See if the player has all the items needed to complete the quest
+                        // Проверяем, есть ли у игрока все предметы, необходимые для выполнения квеста
                         bool playerHasAllItemsToCompleteQuest = _player.HasAllQuestCompletionItems(newLocation.QuestAvailableHere);
 
 
-                        // The player has all items required to complete the quest
+                        // У игрока есть все предметы, необходимые для выполнения квеста
                         if (playerHasAllItemsToCompleteQuest)
                         {
-                            // Display message
+                            // Отображение сообщения
                             rtbMessages.Text += Environment.NewLine;
                             rtbMessages.Text += "You complete the '" + newLocation.QuestAvailableHere.Name + "' quest." + Environment.NewLine;
 
                             _player.RemoveQuestCompletionItems(newLocation.QuestAvailableHere);
 
-                            // Give quest rewards
+                            // Выдаем награды за квест
                             rtbMessages.Text += "You receive: " + Environment.NewLine;
                             rtbMessages.Text += newLocation.QuestAvailableHere.RewardExperiencePoints.ToString() + " experience points" + Environment.NewLine;
                             rtbMessages.Text += newLocation.QuestAvailableHere.RewardGold.ToString() + " gold" + Environment.NewLine;
@@ -243,10 +243,10 @@ namespace RPG_Test
                             _player.ExperiencePoints += newLocation.QuestAvailableHere.RewardExperiencePoints;
                             _player.Gold += newLocation.QuestAvailableHere.RewardGold;
 
-                            // Add the reward item to the player's inventory
+                            // Добавляем предмет-награду в инвентарь игрока
                             _player.AddItemToInventory(newLocation.QuestAvailableHere.RewardItem);
 
-                            // Mark the quest as completed
+                            // Отмечаем квест как выполненный
                             _player.MarkQuestCompleted(newLocation.QuestAvailableHere);
                         }
                     }
@@ -254,9 +254,9 @@ namespace RPG_Test
 
                 else
                 {
-                    // The player does not already have the quest
+                    // У игрока еще нет квеста
 
-                    // Display the messages
+                    // Отображение сообщений
                     rtbMessages.Text += "You receive the " + newLocation.QuestAvailableHere.Name + " quest." + Environment.NewLine;
                     rtbMessages.Text += newLocation.QuestAvailableHere.Description + Environment.NewLine;
                     rtbMessages.Text += "To complete it, return with:" + Environment.NewLine;
@@ -273,17 +273,17 @@ namespace RPG_Test
                     }
                     rtbMessages.Text += Environment.NewLine;
 
-                    // Add the quest to the player's quest list
+                    // Добавляем квест в список квестов игрока
                     _player.Quests.Add(new PlayerQuest(newLocation.QuestAvailableHere));
                 }
             }
 
-            // Does the location have a monster?
+            // Есть ли в локации монстр?
             if (newLocation.MonsterLivingHere != null)
             {
                 rtbMessages.Text += "You see a " + newLocation.MonsterLivingHere.Name + Environment.NewLine;
 
-                // Make a new monster, using the values from the standard monster in the World.Monster list
+                // Создаём нового монстра, используя значения стандартного монстра из списка World.Monster
                 Monster standardMonster = World.MonsterByID(newLocation.MonsterLivingHere.ID);
 
                 _currentMonster = new Monster(standardMonster.ID, standardMonster.Name, standardMonster.MaximumDamage,
@@ -309,13 +309,13 @@ namespace RPG_Test
                 btnUsePotion.Visible = false;
             }
 
-            // Refresh player's inventory list
+            // Обновляем список инвентаря игрока
             UpdateInventoryListInUI();
-            // Refresh player's quest list
+            // Обновляем список квестов игрока
             UpdateQuestListInUI();
-            // Refresh player's weapons combobox
+            // Обновляем список оружия игрока
             UpdateWeaponListInUI();
-            // Refresh player's potions combobox
+            // Обновляем список зелий игрока
             UpdatePotionListInUI();
         }
         private void UpdateInventoryListInUI()
@@ -362,7 +362,7 @@ namespace RPG_Test
             }
             if (weapons.Count == 0)
             {
-                // The player doesn't have any weapons, so hide the weapon combobox and "Use" button
+                // У игрока нет оружия, поэтому скройте список оружия и кнопку «Использовать»
                 cboWeapons.Visible = false;
                 btnUseWeapon.Visible = false;
             }
@@ -389,7 +389,7 @@ namespace RPG_Test
             }
             if (healingPotions.Count == 0)
             {
-                // The player doesn't have any potions, so hide the potion combobox and "Use" button
+                // У игрока нет зелий, поэтому скройте список зелий и кнопку «Использовать»
                 cboPotions.Visible = false;
                 btnUsePotion.Visible = false;
             }

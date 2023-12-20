@@ -28,25 +28,27 @@ namespace RPG_Test
         {
             if (location.ItemRequiredToEnter == null)
             {
-                // There is no required item for this location, so return "true"
+                // Для этого местоположения нет обязательного элемента, поэтому возвращаем «true»
                 return true;
             }
 
-            // See if the player has the required item in their inventory
+            // Проверяем, есть ли у игрока в инвентаре нужный предмет
             return Inventory.Exists(ii => ii.Details.ID == location.ItemRequiredToEnter.ID);
         }
 
         public bool HasThisQuest(Quest quest)
         {
-            foreach (PlayerQuest playerQuest in Quests)
-            {
-                if (playerQuest.Details.ID == quest.ID)
-                {
-                    return true;
-                }
-            }
+            //foreach (PlayerQuest playerQuest in Quests)
+            //{
+            //    if (playerQuest.Details.ID == quest.ID)
+            //    {
+            //        return true;
+            //    }
+            //}
 
-            return false;
+            //return false;
+            // Пробник, научиться создавать
+            return Quests.Exists(playerQuest => playerQuest.Details.ID == quest.ID);
         }
 
         public bool CompletedThisQuest(Quest quest)
@@ -64,33 +66,33 @@ namespace RPG_Test
 
         public bool HasAllQuestCompletionItems(Quest quest)
         {
-            // See if the player has all the items needed to complete the quest here
+            // Здесь можно проверить, есть ли у игрока все предметы, необходимые для выполнения квеста
             foreach (QuestCompletionItem qci in quest.QuestCompletionItems)
             {
                 bool foundItemInPlayersInventory = false;
-
-                // Check each item in the player's inventory, to see if they have it, and enough of it
+                
+                // Проверяем каждый предмет в инвентаре игрока, чтобы узнать, есть ли он у него и достаточно ли его
                 foreach (InventoryItem ii in Inventory)
                 {
-                    if (ii.Details.ID == qci.Details.ID) // The player has the item in their inventory
+                    if (ii.Details.ID == qci.Details.ID) // У игрока есть предмет в инвентаре
                     {
                         foundItemInPlayersInventory = true;
 
-                        if (ii.Quantity < qci.Quantity) // The player does not have enough of this item to complete the quest
+                        if (ii.Quantity < qci.Quantity) // У игрока недостаточно этого предмета для выполнения квеста
                         {
                             return false;
                         }
                     }
                 }
 
-                // The player does not have any of this quest completion item in their inventory
+                // У игрока в инвентаре нет ни одного предмета для завершения квеста
                 if (!foundItemInPlayersInventory)
                 {
                     return false;
                 }
             }
 
-            // If we got here, then the player must have all the required items, and enough of them, to complete the quest.
+            // Если мы сюда попали, то у игрока должны быть все необходимые предметы, и в достаточном количестве, чтобы выполнить квест.
             return true;
         }
 
@@ -102,7 +104,7 @@ namespace RPG_Test
                 {
                     if (ii.Details.ID == qci.Details.ID)
                     {
-                        // Subtract the quantity from the player's inventory that was needed to complete the quest
+                        // Вычитаем из инвентаря игрока количество, необходимое для выполнения квеста
                         ii.Quantity -= qci.Quantity;
                         break;
                     }
@@ -116,28 +118,28 @@ namespace RPG_Test
             {
                 if (ii.Details.ID == itemToAdd.ID)
                 {
-                    // They have the item in their inventory, so increase the quantity by one
+                    // У них есть предмет в инвентаре, поэтому увеличьте количество на единицу
                     ii.Quantity++;
 
-                    return; // We added the item, and are done, so get out of this function
+                    return; // Мы добавили элемент и все готово, поэтому выходим из этой функции
                 }
             }
 
-            // They didn't have the item, so add it to their inventory, with a quantity of 1
+            // У них не было предмета, поэтому добавьте его в инвентарь в количестве 1
             Inventory.Add(new InventoryItem(itemToAdd, 1));
         }
 
         public void MarkQuestCompleted(Quest quest)
         {
-            // Find the quest in the player's quest list
+            // Находим квест в списке квестов игрока
             foreach (PlayerQuest pq in Quests)
             {
                 if (pq.Details.ID == quest.ID)
                 {
-                    // Mark it as completed
+                    // Отмечаем его как завершенное
                     pq.IsCompleted = true;
 
-                    return; // We found the quest, and marked it complete, so get out of this function
+                    return; // Мы нашли квест и отметили его как завершенный, поэтому выходим из этой функции
                 }
             }
         }
