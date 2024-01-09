@@ -10,16 +10,18 @@ namespace RPG_Test
     {
         public int Gold { get; set; }
         public int ExperiencePoints { get; set;}
-        public int Level { get; set; }
+        public int Level
+        {
+            get { return ((ExperiencePoints / 100) + 1); }
+        }
         public Location CurrentLocation { get; set; }
         public List<InventoryItem> Inventory { get; set; }
         public List<PlayerQuest> Quests { get; set; }
 
-        public Player(int currentHitPoints, int maximumHitPoints, int gold, int experiencePoints, int level) : base(currentHitPoints, maximumHitPoints)
+        public Player(int currentHitPoints, int maximumHitPoints, int gold, int experiencePoints) : base(currentHitPoints, maximumHitPoints)
         {
             Gold = gold;
             ExperiencePoints = experiencePoints;
-            Level = level;
             Inventory = new List<InventoryItem>();
             Quests = new List<PlayerQuest>();
         }
@@ -53,15 +55,17 @@ namespace RPG_Test
 
         public bool CompletedThisQuest(Quest quest)
         {
-            foreach (PlayerQuest playerQuest in Quests)
-            {
-                if (playerQuest.Details.ID == quest.ID)
-                {
-                    return playerQuest.IsCompleted;
-                }
-            }
+            //foreach (PlayerQuest playerQuest in Quests)
+            //{
+            //    if (playerQuest.Details.ID == quest.ID)
+            //    {
+            //        return playerQuest.IsCompleted;
+            //    }
+            //}
 
-            return false;
+            PlayerQuest playrQuest = Quests.SingleOrDefault(q => q.Details.ID == quest.ID);
+            //                  это типо если. : если условие выполнено 
+            return playrQuest == null ? false: playrQuest.IsCompleted;
         }
 
         public bool HasAllQuestCompletionItems(Quest quest)
@@ -69,24 +73,23 @@ namespace RPG_Test
             // Здесь можно проверить, есть ли у игрока все предметы, необходимые для выполнения квеста
             foreach (QuestCompletionItem qci in quest.QuestCompletionItems)
             {
-                bool foundItemInPlayersInventory = false;
+                //bool foundItemInPlayersInventory = false;
                 
                 // Проверяем каждый предмет в инвентаре игрока, чтобы узнать, есть ли он у него и достаточно ли его
-                foreach (InventoryItem ii in Inventory)
-                {
-                    if (ii.Details.ID == qci.Details.ID) // У игрока есть предмет в инвентаре
-                    {
-                        foundItemInPlayersInventory = true;
+                //foreach (InventoryItem ii in Inventory)
+                //{
+                //    if (ii.Details.ID == qci.Details.ID) // У игрока есть предмет в инвентаре
+                //    {
+                //        foundItemInPlayersInventory = true;
 
-                        if (ii.Quantity < qci.Quantity) // У игрока недостаточно этого предмета для выполнения квеста
-                        {
-                            return false;
-                        }
-                    }
-                }
-
+                //        if (ii.Quantity < qci.Quantity) // У игрока недостаточно этого предмета для выполнения квеста
+                //        {
+                //            return false;
+                //        }
+                //    }
+                //}
                 // У игрока в инвентаре нет ни одного предмета для завершения квеста
-                if (!foundItemInPlayersInventory)
+                if (!Inventory.Exists(ii=> ii.Details.ID == qci.Details.ID && ii.Quantity < qci.Quantity))
                 {
                     return false;
                 }
@@ -100,47 +103,46 @@ namespace RPG_Test
         {
             foreach (QuestCompletionItem qci in quest.QuestCompletionItems)
             {
-                foreach (InventoryItem ii in Inventory)
+                //foreach (InventoryItem ii in Inventory)
+                //{
+                //    if (ii.Details.ID == qci.Details.ID)
+                //    {
+                //        // Вычитаем из инвентаря игрока количество, необходимое для выполнения квеста
+                //        ii.Quantity -= qci.Quantity;
+                //        break;
+                //    }
+                //}
+                InventoryItem item = Inventory.SingleOrDefault( ii=> ii.Details.ID == qci.Details.ID );
+                if (item != null)
                 {
-                    if (ii.Details.ID == qci.Details.ID)
-                    {
-                        // Вычитаем из инвентаря игрока количество, необходимое для выполнения квеста
-                        ii.Quantity -= qci.Quantity;
-                        break;
-                    }
+                    // Вычтите из инвентаря игрока количество, необходимое для выполнения квеста.
+                    item.Quantity -= qci.Quantity;
                 }
             }
         }
 
         public void AddItemToInventory(Item itemToAdd)
         {
-            foreach (InventoryItem ii in Inventory)
+            InventoryItem item = Inventory.SingleOrDefault(ii => ii.Details.ID == itemToAdd.ID);
+            if (item == null)
             {
-                if (ii.Details.ID == itemToAdd.ID)
-                {
-                    // У них есть предмет в инвентаре, поэтому увеличьте количество на единицу
-                    ii.Quantity++;
-
-                    return; // Мы добавили элемент и все готово, поэтому выходим из этой функции
-                }
+                // They didn't have the item, so add it to their inventory, with a quantity of 1
+                Inventory.Add(new InventoryItem(itemToAdd, 1));
             }
-
-            // У них не было предмета, поэтому добавьте его в инвентарь в количестве 1
-            Inventory.Add(new InventoryItem(itemToAdd, 1));
+            else
+            {
+                // They have the item in their inventory, so increase the quantity by one
+                item.Quantity++;
+            }
         }
 
         public void MarkQuestCompleted(Quest quest)
         {
-            // Находим квест в списке квестов игрока
-            foreach (PlayerQuest pq in Quests)
+            // Find the quest in the player's quest list
+            PlayerQuest playerQuest = Quests.SingleOrDefault(pq => pq.Details.ID == quest.ID);
+            if (playerQuest != null)
             {
-                if (pq.Details.ID == quest.ID)
-                {
-                    // Отмечаем его как завершенное
-                    pq.IsCompleted = true;
-
-                    return; // Мы нашли квест и отметили его как завершенный, поэтому выходим из этой функции
-                }
+                playerQuest.IsCompleted = true;
             }
         }
 

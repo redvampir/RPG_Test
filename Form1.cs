@@ -9,7 +9,7 @@
         {
             InitializeComponent();
 
-            _player = new Player(10, 10, 20, 0, 1);
+            _player = new Player(10, 10, 20, 0);
             MoveTo(World.LocationByID(World.LOCATION_ID_HOME));
             _player.Inventory.Add(new InventoryItem(World.ItemByID(World.ITEM_ID_RUSTY_SWORD), 1));
 
@@ -25,7 +25,7 @@
         }
 
         //Use Weapon - использовать оружие
-        private void button1_Click(object sender, EventArgs e) 
+        private void button1_Click(object sender, EventArgs e)
         {
             // Получаем выбранное в данный момент оружие из списка оружия cbo
             Weapon currentWeapon = (Weapon)cboWeapons.SelectedItem;
@@ -179,14 +179,14 @@
 
         private void MoveTo(Location newLocation)
         {
-          
+
             if (!_player.HasRequiredItemToEnterThisLocation(newLocation))
             {
-                 // Мы не нашли нужный предмет в их инвентаре, поэтому выводим сообщение и прекращаем попытки переместить
-                 rtbMessages.Text += "You must have a " + newLocation.ItemRequiredToEnter.Name + " to enter this location." + Environment.NewLine;
-                 return;
+                // Мы не нашли нужный предмет в их инвентаре, поэтому выводим сообщение и прекращаем попытки переместить
+                rtbMessages.Text += "You must have a " + newLocation.ItemRequiredToEnter.Name + " to enter this location." + Environment.NewLine;
+                return;
             }
-            
+
 
             // Обновляем текущее местоположение игрока
             _player.CurrentLocation = newLocation;
@@ -318,6 +318,15 @@
             // Обновляем список зелий игрока
             UpdatePotionListInUI();
         }
+
+        private void UpdatePlayerStats()
+        {
+            // Обновляем информацию об игроке и элементы управления инвентарем
+            lblHitPoints.Text = _player.CurrentHitPoints.ToString();
+            lblGold.Text = _player.Gold.ToString();
+            lblExperience.Text = _player.ExperiencePoints.ToString();
+            lblLevel.Text = _player.Level.ToString();
+        }
         private void UpdateInventoryListInUI()
         {
             dgvInventory.RowHeadersVisible = false;
@@ -400,6 +409,12 @@
                 cboPotions.ValueMember = "ID";
                 cboPotions.SelectedIndex = 0;
             }
+        }
+
+        private void rtbMessages_TextChanged(object sender, EventArgs e)
+        {
+            rtbMessages.SelectionStart = rtbMessages.Text.Length;
+            rtbMessages.ScrollToCaret();
         }
     }
 }
